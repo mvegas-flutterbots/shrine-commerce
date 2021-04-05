@@ -12,16 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'model/products_repository.dart';
-import 'model/product.dart';
+import 'model/product.dart' as ProductCategory;
 import 'supplemental/asymmetric_view.dart';
 
 class HomePage extends StatelessWidget {
+  final ProductCategory.Category category;
+
+  const HomePage({this.category: ProductCategory.Category.all});
+
   List<Card> _buildGridCards(BuildContext context) {
-    List<Product> products = ProductsRepository.loadProducts(Category.all);
+    List<ProductCategory.Product> products =
+        ProductsRepository.loadProducts(ProductCategory.Category.all);
 
     if (products == null || products.isEmpty) {
       return const <Card>[];
@@ -74,12 +80,9 @@ class HomePage extends StatelessWidget {
     }).toList();
   }
 
-  // TODO: Add a variable for Category (104)
   @override
   Widget build(BuildContext context) {
-    return AsymmetricView(
-        products: ProductsRepository.loadProducts(Category.all));
-    // TODO: Pass Category variable to AsymmetricView (104)
+    return AsymmetricView(products: ProductsRepository.loadProducts(category));
     // return Scaffold(
     //   appBar: AppBar(
     //     leading: IconButton(

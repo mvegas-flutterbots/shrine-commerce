@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import 'model/product.dart';
+import 'login.dart';
 
 const double _kFlingVelocity = 2.0;
 
@@ -28,7 +29,6 @@ class Backdrop extends StatefulWidget {
   _BackdropState createState() => _BackdropState();
 }
 
-// TODO: Add _BackdropState class (104)
 class _BackdropState extends State<Backdrop>
     with SingleTickerProviderStateMixin {
   final GlobalKey _backdropKey = GlobalKey(debugLabel: 'Backdrop');
@@ -49,6 +49,17 @@ class _BackdropState extends State<Backdrop>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(Backdrop old) {
+    super.didUpdateWidget(old);
+
+    if (widget.currentCategory != old.currentCategory) {
+      _toggleBackdropLayerVisibility();
+    } else if (!_frontLayerVisibility) {
+      _controller.fling(velocity: _kFlingVelocity);
+    }
   }
 
   bool get _frontLayerVisibility {
@@ -83,6 +94,7 @@ class _BackdropState extends State<Backdrop>
         PositionedTransition(
             rect: layerAnimation,
             child: _FrontLayer(
+              onTap: _toggleBackdropLayerVisibility,
               child: widget.frontLayer,
             )),
       ],
@@ -104,23 +116,28 @@ class _BackdropState extends State<Backdrop>
       ),
       title: Text('SHRINE'),
       actions: <Widget>[
-        // TODO: Add shortcut to login screen from trailing icons (104)
         IconButton(
           icon: Icon(
             Icons.search,
-            semanticLabel: 'search',
+            semanticLabel: 'login',
           ),
           onPressed: () {
-            // TODO: Add open login (104)
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
+            );
           },
         ),
         IconButton(
           icon: Icon(
             Icons.tune,
-            semanticLabel: 'filter',
+            semanticLabel: 'login',
           ),
           onPressed: () {
-            // TODO: Add open login (104)
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) => LoginPage()),
+            );
           },
         ),
       ],
@@ -133,12 +150,13 @@ class _BackdropState extends State<Backdrop>
 }
 
 class _FrontLayer extends StatelessWidget {
-  // TODO: Add on-tap callback (104)
   const _FrontLayer({
     Key key,
+    this.onTap,
     this.child,
   }) : super(key: key);
 
+  final VoidCallback onTap;
   final Widget child;
 
   @override
@@ -151,7 +169,14 @@ class _FrontLayer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          // TODO: Add a GestureDetector (104)
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onTap,
+            child: Container(
+              height: 40.0,
+              alignment: AlignmentDirectional.centerStart,
+            ),
+          ),
           Expanded(
             child: child,
           ),
